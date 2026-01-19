@@ -1,27 +1,45 @@
-from django.shortcuts import render, HttpResponse
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Job, Company
+from django.shortcuts import render, get_object_or_404
 
-def home(request):
-    # Используем f-строку или обычные тройные кавычки для многострочного текста
-    html_content = """
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Login</title>
-        <style>
-            body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
-            .login-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        </style>
-    </head>
-    <body>
-        <div class="login-container">
-            <h2>Sign-in</h2>
-            <form method="POST">
-                <input type="email" name="email" placeholder="Email" required><br><br>
-                <input type="password" name="password" placeholder="Password" required><br><br>
-                <button type="submit">Lock in</button>
-            </form>
-        </div>
-    </body>
-    </html>
-    """
-    return HttpResponse(html_content)
+
+
+def job_list(request):
+    jobs = Job.objects.select_related("company").all()
+    return render(request, "job_list.html", {"jobs": jobs})
+
+
+def job_detail(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    return render(request, "job_detail.html", {"job": job})
+
+@csrf_exempt
+def api_jobs(request):
+    # GET: list
+    if request.method == "GET":
+        jobs = Job.objects.select_related("company").values(
+            "id",
+            "title",
+            "location",
+            "salary_range",
+            "company__name"
+        )
+        return JsonResponse(list(jobs), safe=False)
+
+    # POST: create
+    if request.method == "POST":
+        data = json.loads(request.body or "{}")
+
+        job = Job.objects.create(
+            title=data.get("title", ""),
+            description=data.get("description", ""),
+            location=data.get("location", ""),
+            salary_range=data.get("salary_range", ""),
+            company=Company.objects.get(id=data.get("company_id"))
+        )
+
+        return JsonResponse({"created": True, "id": job.id})
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)

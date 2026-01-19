@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Available Jobs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Available Jobs</h2>
+    <p class="muted">Browse open positions and apply.</p>
+</div>
+
+{% if jobs %}
+    <div class="job-grid">
+        {% for job in jobs %}
+            <article class="job-card">
+                <div class="job-card__top">
+                    <h3 class="job-title">
+                        <a href="{% url 'job_detail' job.id %}">{{ job.title }}</a>
+                    </h3>
+                    <div class="job-meta">
+                        <span class="pill pill--green">{{ job.company.name }}</span>
+                        <span class="pill">{{ job.location }}</span>
+                    </div>
+                </div>
+
+                <p class="job-desc">
+                    {{ job.description|truncatechars:180 }}
+                </p>
+
+                <div class="job-card__bottom">
+                    <div class="salary">
+                        <span class="label">Salary:</span>
+                        <span class="value">{{ job.salary_range|default:"Not specified" }}</span>
+                    </div>
+                    <a class="btn" href="{% url 'job_detail' job.id %}">View</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty">
+        <h3>No jobs available</h3>
+        <p class="muted">Check back later.</p>
+    </div>
+{% endif %}
+{% endblock %}

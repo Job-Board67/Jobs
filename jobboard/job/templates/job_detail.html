@@ -1,0 +1,14 @@
+{% extends "job/base.html" %}
+
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ job.title }}</h2>
+
+<p><strong>Company:</strong> {{ job.company.name }}</p>
+<p><strong>Description:</strong> {{ job.description }}</p>
+<p><strong>Location:</strong> {{ job.location }}</p>
+<p><strong>Salary:</strong> {{ job.salary_range|default:"Not specified" }}</p>
+
+<a href="{% url 'job_list' %}">Back to jobs</a>
+{% endblock %}
