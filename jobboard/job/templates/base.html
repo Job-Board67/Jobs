@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Job Board{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar__inner">
+        <div class="brand">
+            <div class="brand__logo">JB</div>
+            <div class="brand__text">
+                <div class="brand__title">Job Board</div>
+                <div class="brand__subtitle">Find your next role</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>
