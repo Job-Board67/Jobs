@@ -1,3 +1,4 @@
+#settings
 """
 URL configuration for jobboard project.
 
