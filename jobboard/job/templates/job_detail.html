@@ -3,12 +3,51 @@
 {% block title %}{{ job.title }}{% endblock %}
 
 {% block content %}
-<h2>{{ job.title }}</h2>
+<section class="section">
+  <div class="section-head">
+    <h1 class="section-title">{{ job.title }}</h1>
+    <p class="section-subtitle">Full job details and key info.</p>
+  </div>
 
-<p><strong>Company:</strong> {{ job.company.name }}</p>
-<p><strong>Description:</strong> {{ job.description }}</p>
-<p><strong>Location:</strong> {{ job.location }}</p>
-<p><strong>Salary:</strong> {{ job.salary_range|default:"Not specified" }}</p>
+  <article class="card card-detail">
+    <div class="card-top">
+      <div class="badge-row">
+        <span class="badge badge-soft">{{ job.company.name }}</span>
+        <span class="badge">{{ job.location }}</span>
+      </div>
 
-<a href="{% url 'job_list' %}">Back to jobs</a>
+      <div class="salary-pill">
+        <span class="salary-label">Salary</span>
+        <span class="salary-value">{{ job.salary_range }}</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">Company</div>
+        <div class="detail-value">{{ job.company.name }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Location</div>
+        <div class="detail-value">{{ job.location }}</div>
+      </div>
+
+      <div class="detail-item detail-wide">
+        <div class="detail-label">Description</div>
+        <div class="detail-value detail-desc">
+          {{ job.description|linebreaksbr }}
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="btn btn-ghost" href="{% url 'job_list' %}">Back</a>
+      <a class="btn" href="{% url 'job_list' %}">View all jobs</a>
+    </div>
+  </article>
+</section>
 {% endblock %}
+
