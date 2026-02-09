@@ -2,8 +2,10 @@ import json
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job, Company
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 
 def job_list(request):
@@ -14,8 +16,21 @@ def job_list(request):
 def job_detail(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     return render(request, "job_detail.html", {"job": job})
+
 def is_employer(user):
     return hasattr(user, "profile") and user.profile.role == "EMPLOYER"
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("/")
+    else:
+        form = UserCreationForm()
+
+    return render(request, "registration/register.html", {"form": form})
 
 @login_required
 def create_job(request):

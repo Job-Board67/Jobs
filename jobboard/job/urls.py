@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import job_list, job_detail, api_jobs, api_job_detail
+from .views import job_list, job_detail, api_jobs, api_job_detail, register
 from . import views
 
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
     path("api/jobs/", api_jobs, name="api_jobs"),
     path("api/jobs/<int:job_id>/", api_job_detail),
     path("profile/", views.profile, name="profile"),
+    path("register/", register, name="register"),
 ]
