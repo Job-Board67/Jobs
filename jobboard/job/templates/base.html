@@ -2,32 +2,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Job Board{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Work Hub{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
 
 <header class="topbar">
-    <div class="topbar__inner">
-        <div class="brand">
-            <div class="brand__logo">JB</div>
-            <div class="brand__text">
-                <div class="brand__title">Job Board</div>
-                <div class="brand__subtitle">Find your next role</div>
-            </div>
-        </div>
-
-        <div class="topbar__actions">
-            <a href="{% url 'profile' %}" class="profile-link">Profile</a>
-        </div>
+  <div class="topbar__inner">
+    <div class="brand">
+      <div class="brand__logo">WH</div>
+      <div class="brand__text">
+        <div class="brand__title">Work Hub</div>
+        <div class="brand__subtitle">Find your next role</div>
+      </div>
     </div>
+
+    <!-- ✅ Profile button -->
+    <div class="topbar__actions">
+      <a class="profile-link" href="{% url 'profile' %}">Profile</a>
+    </div>
+  </div>
 </header>
 
-
 <main class="container">
-    {% block content %}{% endblock %}
+  {% block content %}{% endblock %}
 </main>
 
 </body>
