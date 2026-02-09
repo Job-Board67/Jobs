@@ -12,27 +12,40 @@ from .models import Profile
 
 @login_required
 def job_list(request):
-    jobs = Job.objects.select_related("company").all()
+    jobs = Job.objects.select_related("company").order_by("-posted_at")
     return render(request, "job_list.html", {"jobs": jobs})
 
 
+@login_required
 def job_detail(request, job_id):
-    job = get_object_or_404(Job, id=job_id)
+    job = get_object_or_404(Job.objects.select_related("company"), id=job_id)
     return render(request, "job_detail.html", {"job": job})
 
 def is_employer(user):
     return hasattr(user, "profile") and user.profile.role == "EMPLOYER"
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect("job_list")
+
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.email = form.cleaned_data.get("email", "")
+            user.save()
+
+            # записываем роль
+            user.profile.role = form.cleaned_data["role"]
+            user.profile.save()
+
             login(request, user)
             return redirect("job_list")
     else:
         form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+
+    return render(request, "registration/register.html", {"form": form})
+
 
 def employer_required(view_func):
     def _wrapped(request, *args, **kwargs):
@@ -48,65 +61,33 @@ def create_job(request):
     if not is_employer(request.user):
         return HttpResponseForbidden("Only Employers can create jobs.")
 
-def profile(request):
-    return render(request, "profile.html")
-
-@csrf_exempt
+@login_required
+def profile_view(request):
+    return render(request, "profile.html", {"profile": request.user.profile})
+@login_required
 def api_jobs(request):
-    # GET: list
-    if request.method == "GET":
-        jobs = Job.objects.select_related("company").values(
-            "id",
-            "title",
-            "location",
-            "salary_range",
-            "company__name"
-        )
-        return JsonResponse(list(jobs), safe=False)
+    jobs = Job.objects.select_related("company").order_by("-posted_at")
+    data = [
+        {
+            "id": j.id,
+            "title": j.title,
+            "company": j.company.name,
+            "location": j.location,
+            "salary_range": j.salary_range,
+        }
+        for j in jobs
+    ]
+    return JsonResponse(data, safe=False)
 
-    # POST: create
-    if request.method == "POST":
-        data = json.loads(request.body or "{}")
-
-        job = Job.objects.create(
-            title=data.get("title", ""),
-            description=data.get("description", ""),
-            location=data.get("location", ""),
-            salary_range=data.get("salary_range", ""),
-            company=Company.objects.get(id=data.get("company_id"))
-        )
-
-        return JsonResponse({"created": True, "id": job.id})
-
-    return JsonResponse({"error": "Method not allowed"}, status=405)
-@csrf_exempt
+@login_required
 def api_job_detail(request, job_id):
-    try:
-        job = Job.objects.get(id=job_id)
-    except Job.DoesNotExist:
-        return JsonResponse({"error": "Not found"}, status=404)
-
-    # GET
-    if request.method == "GET":
-        return JsonResponse({
-            "id": job.id,
-            "title": job.title,
-            "location": job.location,
-            "salary_range": job.salary_range
-        })
-
-    # PUT
-    if request.method == "PUT":
-        data = json.loads(request.body or "{}")
-        job.title = data.get("title", job.title)
-        job.location = data.get("location", job.location)
-        job.salary_range = data.get("salary_range", job.salary_range)
-        job.save()
-        return JsonResponse({"updated": True})
-
-    # DELETE
-    if request.method == "DELETE":
-        job.delete()
-        return JsonResponse({"deleted": True})
-
-    return JsonResponse({"error": "Method not allowed"}, status=405)
+    j = get_object_or_404(Job.objects.select_related("company"), id=job_id)
+    data = {
+        "id": j.id,
+        "title": j.title,
+        "company": j.company.name,
+        "location": j.location,
+        "salary_range": j.salary_range,
+        "description": j.description,
+    }
+    return JsonResponse(data)

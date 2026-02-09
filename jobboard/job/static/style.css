@@ -80,6 +80,14 @@ body{
 .profile-card h2 {
     margin-bottom: 20px;
 }
+.topbar__inner{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 16px 18px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
 
 
 /* ✅ Profile link */

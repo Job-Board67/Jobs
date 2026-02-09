@@ -1,38 +1,47 @@
-{% extends "base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Work Hub</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
 
-{% block title %}Login | Job Board{% endblock %}
+<header class="topbar">
+    <div class="topbar__inner">
+        <div class="brand">
+            <div class="brand__logo">WH</div>
+            <div class="brand__text">
+                <div class="brand__title">Work Hub</div>
+                <div class="brand__subtitle">Find your next role</div>
+            </div>
+        </div>
+    </div>
+</header>
 
-{% block content %}
-<div class="job-card card-detail" style="max-width:420px;margin:40px auto;">
+<main class="container">
+    <div class="job-card" style="max-width:420px;margin:40px auto;">
+        <h2 class="job-title">Login</h2>
 
-    <h2 class="job-title" style="margin-top:0;">Login</h2>
-    <p class="muted">Sign in to continue</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <div class="actions" style="margin-top:12px;">
-            <button type="submit" class="btn" style="width:100%;">
+            <button type="submit" class="btn" style="width:100%;margin-top:10px;">
                 Login
             </button>
+        </form>
+
+        <div style="margin-top:16px;text-align:center;">
+            <span class="muted">Don’t have an account?</span><br>
+            <a href="{% url 'register' %}" class="btn"
+               style="margin-top:8px;display:inline-block;background:linear-gradient(135deg,#22c55e,#16a34a);">
+                Register
+            </a>
         </div>
-    </form>
-
-    <div style="margin-top:16px;text-align:center;">
-        <span class="muted">Don’t have an account?</span><br>
-
-        <a href="{% url 'register' %}"
-           class="btn"
-           style="
-             margin-top:8px;
-             display:inline-block;
-             background:linear-gradient(135deg,#22c55e,#16a34a);
-           ">
-            Register
-        </a>
     </div>
+</main>
 
-</div>
-{% endblock %}
+</body>
+</html>
