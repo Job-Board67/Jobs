@@ -25,24 +25,14 @@ def is_employer(user):
     return hasattr(user, "profile") and user.profile.role == "EMPLOYER"
 
 def register_view(request):
-    if request.user.is_authenticated:
-        return redirect("job_list")
-
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.email = form.cleaned_data.get("email", "")
-            user.save()
-
-            # записываем роль
-            user.profile.role = form.cleaned_data["role"]
-            user.profile.save()
-
-            login(request, user)
+            user = form.save()
+            login(request, user)  # сразу логиним
             return redirect("job_list")
     else:
-        form = RegisterForm()
+        form = UserCreationForm()
 
     return render(request, "registration/register.html", {"form": form})
 
