@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Job, Application
+from .models import Company, Job, Application, Profile
 
 
 @admin.register(Company)
@@ -29,3 +29,10 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ("submitted_at", "job__company")
     list_select_related = ("job", "applicant", "job__company")
     ordering = ("-submitted_at",)
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "role")
+    list_filter = ("role",)
+    search_fields = ("user__username",)
