@@ -1,9 +1,9 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Job, Company
 from django.shortcuts import render, get_object_or_404
-
+from django.contrib.auth.decorators import login_required
 
 
 def job_list(request):
@@ -14,6 +14,13 @@ def job_list(request):
 def job_detail(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     return render(request, "job_detail.html", {"job": job})
+def is_employer(user):
+    return hasattr(user, "profile") and user.profile.role == "EMPLOYER"
+
+@login_required
+def create_job(request):
+    if not is_employer(request.user):
+        return HttpResponseForbidden("Only Employers can create jobs.")
 
 @csrf_exempt
 def api_jobs(request):
