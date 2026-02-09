@@ -35,6 +35,12 @@ body{
     max-width: 1040px;
     margin: 0 auto;
     padding: 16px 18px;
+
+    /* ✅ layout for logo left + profile right */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
 }
 .brand{
     display:flex;
@@ -61,6 +67,39 @@ body{
     font-size: 13px;
     opacity: 0.85;
     margin-top: 2px;
+}
+.profile-card {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.profile-card h2 {
+    margin-bottom: 20px;
+}
+
+
+/* ✅ Profile link */
+.topbar__actions{
+    display: flex;
+    align-items: center;
+}
+.profile-link{
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.profile-link:hover{
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
 }
 
 /* -------- Container -------- */
@@ -191,6 +230,22 @@ body{
 }
 .btn:hover{ opacity:0.95; }
 
+/* Optional ghost button (if you use it on details page) */
+.btn-ghost{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(15,23,42,0.06);
+    color:#0f172a;
+    text-decoration:none;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid rgba(15,23,42,0.10);
+}
+.btn-ghost:hover{ background: rgba(15,23,42,0.09); }
+
 /* -------- Empty state -------- */
 .empty{
     background: rgba(255,255,255,0.9);
@@ -208,6 +263,7 @@ body{
 @media (min-width: 1020px){
     .job-grid{ grid-template-columns: 1fr 1fr; }
 }
+
 /* ===== Job details ===== */
 .card-detail {
   max-width: 920px;

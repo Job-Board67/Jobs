@@ -11,8 +11,6 @@
 
 <header class="topbar">
     <div class="topbar__inner">
-
-        <!-- Brand -->
         <div class="brand">
             <div class="brand__logo">JB</div>
             <div class="brand__text">
@@ -21,32 +19,12 @@
             </div>
         </div>
 
-        <!-- Navigation -->
-        <nav class="nav">
-            {% if user.is_authenticated %}
-                <span class="nav__user">
-                    {{ user.username }} ({{ user.profile.role }})
-                </span>
-
-                <a href="{% url 'job_list' %}" class="nav__link">Jobs</a>
-
-                {% if user.profile.role == "EMPLOYER" %}
-                    <a href="{% url 'create_job' %}" class="nav__button">
-                        Post a Job
-                    </a>
-                {% endif %}
-
-                <a href="{% url 'logout' %}" class="nav__link">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="nav__link">Login</a>
-                <a href="{% url 'register' %}" class="nav__button">
-                    Sign Up
-                </a>
-            {% endif %}
-        </nav>
-
+        <div class="topbar__actions">
+            <a href="{% url 'profile' %}" class="profile-link">Profile</a>
+        </div>
     </div>
 </header>
+
 
 <main class="container">
     {% block content %}{% endblock %}

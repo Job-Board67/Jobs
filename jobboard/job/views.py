@@ -21,6 +21,9 @@ def is_employer(user):
 def create_job(request):
     if not is_employer(request.user):
         return HttpResponseForbidden("Only Employers can create jobs.")
+@login_required
+def profile(request):
+    return render(request, "profile.html")
 
 @csrf_exempt
 def api_jobs(request):
