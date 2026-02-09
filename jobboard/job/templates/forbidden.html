@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Access denied{% endblock %}
+{% block content %}
+<div class="job-card card-detail">
+  <h2 style="margin-top:0;">Access denied</h2>
+  <p class="muted">Only Employers can perform this action.</p>
+  <div class="actions">
+    <a class="btn" href="{% url 'job_list' %}">Back to jobs</a>
+  </div>
+</div>
+{% endblock %}

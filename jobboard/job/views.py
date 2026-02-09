@@ -6,8 +6,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from .forms import RegisterForm
+from .models import Profile
 
 
+@login_required
 def job_list(request):
     jobs = Job.objects.select_related("company").all()
     return render(request, "job_list.html", {"jobs": jobs})
@@ -20,19 +23,27 @@ def job_detail(request, job_id):
 def is_employer(user):
     return hasattr(user, "profile") and user.profile.role == "EMPLOYER"
 
-def register(request):
+def register_view(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("/")
+            return redirect("job_list")
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
+    return render(request, "register.html", {"form": form})
 
-    return render(request, "registration/register.html", {"form": form})
+def employer_required(view_func):
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("login")
+        if request.user.profile.role != Profile.Role.EMPLOYER:
+            return render(request, "forbidden.html", status=403)
+        return view_func(request, *args, **kwargs)
+    return _wrapped
 
-@login_required
+@employer_required
 def create_job(request):
     if not is_employer(request.user):
         return HttpResponseForbidden("Only Employers can create jobs.")

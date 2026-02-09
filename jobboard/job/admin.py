@@ -8,6 +8,12 @@ class CompanyAdmin(admin.ModelAdmin):
     search_fields = ("name", "website", "description")
 
 
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "role")
+    list_filter = ("role",)
+
+
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "company", "location", "salary_range", "posted_at")
@@ -20,19 +26,7 @@ class JobAdmin(admin.ModelAdmin):
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ("id", "job", "applicant", "submitted_at", "resume_link")
-    search_fields = (
-        "job__title",
-        "job__company__name",
-        "applicant__username",
-        "cover_letter",
-    )
+    search_fields = ("job__title", "job__company__name", "applicant__username", "cover_letter")
     list_filter = ("submitted_at", "job__company")
     list_select_related = ("job", "applicant", "job__company")
     ordering = ("-submitted_at",)
-
-
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "role")
-    list_filter = ("role",)
-    search_fields = ("user__username",)
