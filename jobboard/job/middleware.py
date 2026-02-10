@@ -3,8 +3,10 @@ from django.conf import settings
 
 EXEMPT_URLS = [
     settings.LOGIN_URL,
+    "/register/",          
     "/accounts/logout/",
     "/admin/",
+    "/static/", 
 ]
 
 class LoginRequiredMiddleware:
