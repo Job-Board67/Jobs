@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Profile | Job Board{% endblock %}
+{% block title %}Profile | Work Hub{% endblock %}
 
 {% block content %}
 <div class="job-card" style="max-width:720px;margin:20px auto;">
@@ -9,11 +9,16 @@
     <p><b>Email:</b> {{ request.user.email }}</p>
     <p><b>Role:</b> {{ profile.get_role_display }}</p>
 
-    <div style="margin-top:16px;">
+    <div style="margin-top:16px; display:flex; gap:10px; align-items:center;">
         <a class="btn" href="{% url 'job_list' %}">Back to jobs</a>
-        <a class="btn" style="margin-left:10px;background:linear-gradient(135deg,#ef4444,#dc2626);" href="{% url 'logout' %}">
-            Logout
-        </a>
+
+        <form method="post" action="{% url 'logout' %}" style="margin:0;">
+            {% csrf_token %}
+            <button class="btn" type="submit"
+                    style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+                Logout
+            </button>
+        </form>
     </div>
 </div>
 {% endblock %}
