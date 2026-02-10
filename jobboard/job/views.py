@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Job, Company, Application
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.contrib.auth import login
 from .forms import ApplicationForm, RegisterForm
 from .models import Profile
@@ -43,8 +43,16 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+
+            # если роль хранится в Profile
+            role = form.cleaned_data.get("role")
+            Profile.objects.update_or_create(user=user, defaults={"role": role})
+
             login(request, user)
             return redirect("job_list")
+        else:
+            # чтобы было понятно, что не так (не обязательно)
+            messages.error(request, "Please fix the errors below.")
     else:
         form = RegisterForm()
 
