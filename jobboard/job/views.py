@@ -1,12 +1,12 @@
 import json
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
-from .models import Job, Company
+from .models import Job, Company, Application
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from .forms import RegisterForm
+from .forms import ApplicationForm
 from .models import Profile
 
 
@@ -45,6 +45,29 @@ def employer_required(view_func):
             return render(request, "forbidden.html", status=403)
         return view_func(request, *args, **kwargs)
     return _wrapped
+@login_required
+def apply_to_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+
+    # ❗ защита от повторного отклика
+    if Application.objects.filter(job=job, applicant=request.user).exists():
+        return redirect("job_detail", job_id=job.id)
+
+    if request.method == "POST":
+        form = ApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.job = job
+            application.applicant = request.user
+            application.save()
+            return redirect("job_detail", job_id=job.id)
+    else:
+        form = ApplicationForm()
+
+    return render(request, "apply.html", {
+        "job": job,
+        "form": form
+    })
 
 @employer_required
 def create_job(request):

@@ -36,6 +36,7 @@ class Application(models.Model):
         return f"{self.applicant} -> {self.job}"
 
 
+
 class Profile(models.Model):
     EMPLOYER = "employer"
     STUDENT = "student"
