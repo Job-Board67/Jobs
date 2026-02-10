@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from .forms import ApplicationForm
+from .forms import ApplicationForm, RegisterForm
 from .models import Profile
 
 
@@ -37,13 +37,13 @@ def is_employer(user):
 
 def register_view(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)  # сразу логиним
             return redirect("job_list")
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
 
     return render(request, "registration/register.html", {"form": form})
 
