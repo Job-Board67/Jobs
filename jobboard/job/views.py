@@ -18,8 +18,19 @@ def job_list(request):
 
 @login_required
 def job_detail(request, job_id):
-    job = get_object_or_404(Job.objects.select_related("company"), id=job_id)
-    return render(request, "job_detail.html", {"job": job})
+    job = get_object_or_404(Job, id=job_id)
+
+    already_applied = False
+    if request.user.is_authenticated:
+        already_applied = Application.objects.filter(
+            job=job,
+            applicant=request.user
+        ).exists()
+
+    return render(request, "job_detail.html", {
+        "job": job,
+        "already_applied": already_applied,
+    })
 
 def is_employer(user):
     return hasattr(user, "profile") and user.profile.role == "EMPLOYER"
