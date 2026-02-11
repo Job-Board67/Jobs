@@ -6,4 +6,4 @@ class JobConfig(AppConfig):
     name = "job"
 
     def ready(self):
-        from . import signals  # noqa
+        from . import signals
