@@ -1,13 +1,42 @@
 {% extends "base.html" %}
 
+{% block title %}Apply | Work Hub{% endblock %}
+
 {% block content %}
-<h2>Apply for "{{ job.title }}"</h2>
+<section class="section" style="max-width:720px;margin:32px auto;">
+  <div class="section-head">
+    <h1 class="section-title">Apply for “{{ job.title }}”</h1>
+    <p class="section-subtitle">{{ job.company.name }} • {{ job.location }}</p>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-success">Submit application</button>
-</form>
+  <article class="card form-card" style="padding:18px;">
+    <form method="post" class="form-layout">
+      {% csrf_token %}
 
-<a href="{% url 'job_detail' job.id %}">← Back</a>
+      <div class="form-group">
+        <label class="form-label">{{ form.cover_letter.label }}</label>
+        {{ form.cover_letter }}
+        {% if form.cover_letter.errors %}
+          <div class="form-error">{{ form.cover_letter.errors }}</div>
+        {% endif %}
+        <div class="muted" style="margin-top:6px;font-size:13px;">
+          Briefly explain why you’re a good fit.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">{{ form.resume_link.label }}</label>
+        {{ form.resume_link }}
+        {% if form.resume_link.errors %}
+          <div class="form-error">{{ form.resume_link.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
+        <a href="{% url 'job_detail' job.id %}" class="btn btn-ghost">Back</a>
+        <button type="submit" class="btn">Submit application</button>
+      </div>
+    </form>
+  </article>
+</section>
 {% endblock %}
