@@ -96,23 +96,7 @@ def create_job(request):
     if request.method == "POST":
         form = JobCreateForm(request.POST)
         if form.is_valid():
-            company_choice = form.cleaned_data["company"]
-
-            if company_choice == CREATE_NEW_COMPANY_VALUE:
-                company = Company.objects.create(
-                    name=form.cleaned_data["new_company_name"]
-                )
-            else:
-                company = Company.objects.get(id=int(company_choice))
-
-            Job.objects.create(
-                title=form.cleaned_data["title"],
-                company=company,
-                location=form.cleaned_data["location"],
-                salary_range=form.cleaned_data.get("salary_range", ""),
-                description=form.cleaned_data["description"],
-            )
-
+            form.save() 
             return redirect("job_list")
     else:
         form = JobCreateForm()
