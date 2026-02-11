@@ -1,9 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Application
-
-from .models import Profile
+from .models import Application, Job, Profile
 
 
 class RegisterForm(UserCreationForm):
@@ -34,4 +32,12 @@ class ApplicationForm(forms.ModelForm):
             "resume_link": forms.URLInput(attrs={
                 "placeholder": "Link to your resume"
             }),
+        }
+
+class JobCreateForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ["title", "company", "location", "salary_range", "description"]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 5}),
         }

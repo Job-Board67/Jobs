@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import login
-from .forms import ApplicationForm, RegisterForm
+from .forms import ApplicationForm, RegisterForm, JobCreateForm
 from .models import Profile
 
 
@@ -89,9 +89,19 @@ def apply_to_job(request, job_id):
 
 @login_required
 def create_job(request):
+    # доступ только работодателям
     if request.user.profile.role != "employer":
         return HttpResponseForbidden("Only employers can create jobs.")
 
+    if request.method == "POST":
+        form = JobCreateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("job_list")
+    else:
+        form = JobCreateForm()
+
+    return render(request, "create_job.html", {"form": form})
 
 @login_required
 def profile_view(request):
