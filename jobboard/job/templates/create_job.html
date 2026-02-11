@@ -1,47 +1,48 @@
 {% extends "base.html" %}
+
 {% block title %}Create Job | Work Hub{% endblock %}
 
 {% block content %}
-<section class="section" style="max-width:720px;margin:24px auto;">
-  <div class="section-head">
-    <h1 class="section-title">Create Job</h1>
-    <p class="section-subtitle">Publish a new vacancy.</p>
-  </div>
+<section class="section" style="max-width:620px;margin:40px auto;">
 
-  <article class="card" style="padding:18px;">
-    <form method="post">
-      {% csrf_token %}
+    <div class="section-head">
+        <h1 class="section-title">Create Vacancy</h1>
+    </div>
 
-      <div class="form-group">
-        {{ form.title.label_tag }} {{ form.title }}
-        {{ form.title.errors }}
-      </div>
+    <article class="card form-card">
 
-      <div class="form-group">
-        {{ form.company.label_tag }} {{ form.company }}
-        {{ form.company.errors }}
-      </div>
+        <form method="post" class="form-layout">
+            {% csrf_token %}
 
-      <div class="form-group">
-        {{ form.location.label_tag }} {{ form.location }}
-        {{ form.location.errors }}
-      </div>
+            {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label">
+                        {{ field.label }}
+                    </label>
 
-      <div class="form-group">
-        {{ form.salary_range.label_tag }} {{ form.salary_range }}
-        {{ form.salary_range.errors }}
-      </div>
+                    {{ field }}
 
-      <div class="form-group">
-        {{ form.description.label_tag }} {{ form.description }}
-        {{ form.description.errors }}
-      </div>
+                    {% if field.errors %}
+                        <div class="form-error">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
 
-      <div style="display:flex;gap:10px;margin-top:14px;">
-        <a class="btn btn-ghost" href="{% url 'job_list' %}">Cancel</a>
-        <button type="submit" class="btn">Create</button>
-      </div>
-    </form>
-  </article>
+            <div class="form-actions">
+                <a href="{% url 'job_list' %}" class="btn btn-ghost">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn">
+                    Publish Job
+                </button>
+            </div>
+
+        </form>
+
+    </article>
+
 </section>
 {% endblock %}
