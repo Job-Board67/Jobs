@@ -26,15 +26,45 @@
 
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
 
-            <button type="submit" class="btn" style="width:100%;">
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.role.label_tag }}
+                {{ form.role }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+
+            <button type="submit" class="btn" style="width:100%;margin-top:10px;">
                 Create account
             </button>
         </form>
 
         <div style="margin-top:16px;text-align:center;">
-            <a href="{% url 'login' %}" class="muted">Already have an account? Login</a>
+            <a href="{% url 'login' %}" class="muted">
+                Already have an account? Login
+            </a>
         </div>
     </div>
 </main>
