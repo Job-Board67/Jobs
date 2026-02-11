@@ -215,18 +215,24 @@ body {
 }
 
 .job-desc{
-  margin: 0;
-  color: #374151;
-  line-height: 1.55;
-  font-size: 14px;
+    margin: 0;
+    color: #374151;
+    line-height: 1.55;
+    font-size: 14px;
 
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
+    display: -webkit-box;
+    display: box;
 
-  word-break: break-word;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+
+    overflow: hidden;
+    word-break: break-word;
 }
+
 
 .job-card__bottom{
   margin-top: 14px;
