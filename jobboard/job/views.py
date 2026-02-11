@@ -44,15 +44,11 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
 
-            # если роль хранится в Profile
-            role = form.cleaned_data.get("role")
+            role = form.cleaned_data["role"]
             Profile.objects.update_or_create(user=user, defaults={"role": role})
 
             login(request, user)
             return redirect("job_list")
-        else:
-            # чтобы было понятно, что не так (не обязательно)
-            messages.error(request, "Please fix the errors below.")
     else:
         form = RegisterForm()
 
