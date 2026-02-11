@@ -14,21 +14,35 @@
         <form method="post" class="form-layout">
             {% csrf_token %}
 
+            {# обычные поля, кроме new_company_name #}
             {% for field in form %}
+                {% if field.name != "new_company_name" %}
+                    <div class="form-group">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+
+                        {% if field.errors %}
+                            <div class="form-error">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {# блок для создания новой компании #}
+            <div id="newCompanyBlock" style="display:none;">
                 <div class="form-group">
-                    <label class="form-label">
-                        {{ field.label }}
-                    </label>
+                    <label class="form-label">{{ form.new_company_name.label }}</label>
+                    {{ form.new_company_name }}
 
-                    {{ field }}
-
-                    {% if field.errors %}
+                    {% if form.new_company_name.errors %}
                         <div class="form-error">
-                            {{ field.errors }}
+                            {{ form.new_company_name.errors }}
                         </div>
                     {% endif %}
                 </div>
-            {% endfor %}
+            </div>
 
             <div class="form-actions">
                 <a href="{% url 'job_list' %}" class="btn btn-ghost">
@@ -45,4 +59,20 @@
     </article>
 
 </section>
+
+<script>
+  (function () {
+    const companySelect = document.getElementById("id_company");
+    const block = document.getElementById("newCompanyBlock");
+    const NEW_VALUE = "__new__";
+
+    function toggle() {
+      if (!companySelect) return;
+      block.style.display = (companySelect.value === NEW_VALUE) ? "block" : "none";
+    }
+
+    companySelect.addEventListener("change", toggle);
+    toggle();
+  })();
+</script>
 {% endblock %}

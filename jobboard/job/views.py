@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import login
-from .forms import ApplicationForm, RegisterForm, JobCreateForm
+from .forms import ApplicationForm, RegisterForm, JobCreateForm, CREATE_NEW_COMPANY_VALUE
 from .models import Profile
 
 
@@ -87,22 +87,37 @@ def apply_to_job(request, job_id):
         "form": form
     })
 
+
 @login_required
 def create_job(request):
-    # доступ только работодателям
     if request.user.profile.role != "employer":
         return HttpResponseForbidden("Only employers can create jobs.")
 
     if request.method == "POST":
         form = JobCreateForm(request.POST)
         if form.is_valid():
-            form.save()
+            company_choice = form.cleaned_data["company"]
+
+            if company_choice == CREATE_NEW_COMPANY_VALUE:
+                company = Company.objects.create(
+                    name=form.cleaned_data["new_company_name"]
+                )
+            else:
+                company = Company.objects.get(id=int(company_choice))
+
+            Job.objects.create(
+                title=form.cleaned_data["title"],
+                company=company,
+                location=form.cleaned_data["location"],
+                salary_range=form.cleaned_data.get("salary_range", ""),
+                description=form.cleaned_data["description"],
+            )
+
             return redirect("job_list")
     else:
         form = JobCreateForm()
 
     return render(request, "create_job.html", {"form": form})
-
 @login_required
 def profile_view(request):
     return render(request, "profile.html", {"profile": request.user.profile})

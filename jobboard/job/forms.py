@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Application, Job, Profile
+from .models import Application, Job, Profile, Company
 
+CREATE_NEW_COMPANY_VALUE = "__new__"
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -35,9 +36,26 @@ class ApplicationForm(forms.ModelForm):
         }
 
 class JobCreateForm(forms.ModelForm):
+    company = forms.ChoiceField(label="Company")
+    new_company_name = forms.CharField(label="New company name", required=False)
+
     class Meta:
         model = Job
         fields = ["title", "company", "location", "salary_range", "description"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 5}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        companies = Company.objects.order_by("name")
+        choices = [(str(c.id), c.name) for c in companies]
+        choices.insert(0, (CREATE_NEW_COMPANY_VALUE, "+ Create new company"))
+        self.fields["company"].choices = choices
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("company") == CREATE_NEW_COMPANY_VALUE and not cleaned.get("new_company_name"):
+            self.add_error("new_company_name", "Enter company name.")
+        return cleaned
