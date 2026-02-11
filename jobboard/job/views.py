@@ -87,10 +87,11 @@ def apply_to_job(request, job_id):
         "form": form
     })
 
-@employer_required
+@login_required
 def create_job(request):
-    if not is_employer(request.user):
-        return HttpResponseForbidden("Only Employers can create jobs.")
+    if request.user.profile.role != "employer":
+        return HttpResponseForbidden("Only employers can create jobs.")
+
 
 @login_required
 def profile_view(request):

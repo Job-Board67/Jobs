@@ -485,3 +485,16 @@ body {
 .salary{
   min-width: 0;
 }
+.nav-btn {
+    color: white;
+    margin-right: 16px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    font-size: 14px;
+}
+
+.nav-btn:hover {
+    opacity: 0.9;
+}
