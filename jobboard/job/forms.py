@@ -1,47 +1,20 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from .models import Application, Job, Profile, Company
+from .models import Job, Company
 
 CREATE_NEW_COMPANY_VALUE = "__new__"
 
-class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    role = forms.ChoiceField(choices=Profile.ROLE_CHOICES)
-
-    class Meta:
-        model = User
-        fields = ["username", "email", "role", "password1", "password2"]
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
-        return user
-
-
-class ApplicationForm(forms.ModelForm):
-    class Meta:
-        model = Application
-        fields = ["cover_letter", "resume_link"]
-        widgets = {
-            "cover_letter": forms.Textarea(attrs={
-                "rows": 4,
-                "placeholder": "Write a short cover letter..."
-            }),
-            "resume_link": forms.URLInput(attrs={
-                "placeholder": "Link to your resume"
-            }),
-        }
-
 class JobCreateForm(forms.ModelForm):
-    company = forms.ChoiceField(label="Company")
-    new_company_name = forms.CharField(label="New company name", required=False)
+    company_choice = forms.ChoiceField(label="Company")
+    new_company_name = forms.CharField(
+        label="New company name",
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Only if you choose + Create new company"})
+    )
 
     class Meta:
         model = Job
-        fields = ["title", "company", "location", "salary_range", "description"]
+        # ВАЖНО: company тут НЕТ
+        fields = ["title", "location", "salary_range", "description"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 5}),
         }
@@ -52,10 +25,30 @@ class JobCreateForm(forms.ModelForm):
         companies = Company.objects.order_by("name")
         choices = [(str(c.id), c.name) for c in companies]
         choices.insert(0, (CREATE_NEW_COMPANY_VALUE, "+ Create new company"))
-        self.fields["company"].choices = choices
+        self.fields["company_choice"].choices = choices
 
     def clean(self):
         cleaned = super().clean()
-        if cleaned.get("company") == CREATE_NEW_COMPANY_VALUE and not cleaned.get("new_company_name"):
+        choice = cleaned.get("company_choice")
+        new_name = (cleaned.get("new_company_name") or "").strip()
+
+        if choice == CREATE_NEW_COMPANY_VALUE and not new_name:
             self.add_error("new_company_name", "Enter company name.")
         return cleaned
+
+    def save(self, commit=True):
+        job = super().save(commit=False)
+
+        choice = self.cleaned_data["company_choice"]
+        new_name = (self.cleaned_data.get("new_company_name") or "").strip()
+
+        if choice == CREATE_NEW_COMPANY_VALUE:
+            company, _ = Company.objects.get_or_create(name=new_name)
+        else:
+            company = Company.objects.get(pk=int(choice))
+
+        job.company = company  # ✅ вот тут FK получает Company instance
+
+        if commit:
+            job.save()
+        return job

@@ -90,13 +90,14 @@ def apply_to_job(request, job_id):
 
 @login_required
 def create_job(request):
-    if request.user.profile.role != "employer":
-        return HttpResponseForbidden("Only employers can create jobs.")
+    # только Employer
+    if request.user.profile.role != Profile.EMPLOYER:
+        return redirect("job_list")
 
     if request.method == "POST":
         form = JobCreateForm(request.POST)
         if form.is_valid():
-            form.save() 
+            form.save()  # ✅ company назначается внутри формы
             return redirect("job_list")
     else:
         form = JobCreateForm()
